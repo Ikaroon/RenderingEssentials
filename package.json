@@ -1,0 +1,21 @@
+{
+  "name": "com.ikaroon.rendering-essentials",
+  "version": "1.0.0",
+  "displayName": "Rendering Essentials",
+  "description": "A small collection of rendering and graphics helper classes",
+  "unity": "2020.3",
+  "keywords": [
+    "ikaroon",
+    "graphics",
+    "c#",
+    "rendering",
+    "gradient"
+  ],
+  "author": {
+    "name": "Ikaroon",
+    "email": "hi@marian-brinkmann.com",
+    "url": "https://marian-brinkmann.com/"
+  },
+  "type": "library",
+  "license": "See LICENSE.md file"
+}
