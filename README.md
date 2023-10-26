@@ -26,6 +26,7 @@ A small collection of rendering and graphics essentials
 ### Gradient 2D Textures
 1. Create a new texture asset from `Create>Gradient 2D Texture`
 2. Use the gradient 2D field of the texture and apply
+
 ![image](https://github.com/Ikaroon/RenderingEssentials/assets/65419234/e8d3f56d-b6d3-410b-bf8f-4b768025fcc8)
 
 ### Worley 2D Textures
