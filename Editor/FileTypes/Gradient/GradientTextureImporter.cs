@@ -1,29 +1,16 @@
+using Ikaroon.RenderingEssentialsEditor.Utils;
 using System.IO;
 using UnityEditor.AssetImporters;
 using UnityEngine;
 
-namespace Ikaroon.RenderingEssentialsEditor.FileTypes
+namespace Ikaroon.RenderingEssentialsEditor.FileTypes.Gradient
 {
 	[ScriptedImporter(1, "igat")]
-	public class GradientAutoTextureImporter : ScriptedImporter
+	public class GradientTextureImporter : ScriptedImporter
 	{
 		[System.Serializable]
-		public class GATData
+		public class GTData
 		{
-			public enum TextureSize
-			{
-				_2 = 2,
-				_4 = 4,
-				_8 = 8,
-				_16 = 16,
-				_32 = 32,
-				_64 = 64,
-				_128 = 128,
-				_256 = 256,
-				_512 = 512,
-				_1024 = 1024
-			}
-
 			public enum GradientType
 			{
 				Linear,
@@ -37,7 +24,7 @@ namespace Ikaroon.RenderingEssentialsEditor.FileTypes
 			}
 
 			[field: SerializeField]
-			public Gradient Gradient { get; private set; } = new Gradient();
+			public UnityEngine.Gradient Gradient { get; private set; } = new UnityEngine.Gradient();
 
 			[field: SerializeField]
 			public TextureSize GradientSteps { get; private set; } = TextureSize._64;
@@ -68,31 +55,31 @@ namespace Ikaroon.RenderingEssentialsEditor.FileTypes
 		}
 
 		[field: SerializeField]
-		public GATData Data { get; private set; }
+		public GTData Data { get; private set; }
 
 		public override void OnImportAsset(AssetImportContext ctx)
 		{
-			Data = JsonUtility.FromJson<GATData>(File.ReadAllText(ctx.assetPath));
+			Data = JsonUtility.FromJson<GTData>(File.ReadAllText(ctx.assetPath));
 			if (Data == null)
-				Data = new GATData();
+				Data = new GTData();
 
 			int width = (int)Data.GradientSteps;
 			int height = 1;
 			switch (Data.Type)
 			{
-				case GATData.GradientType.Linear:
+				case GTData.GradientType.Linear:
 					switch (Data.Direction)
 					{
-						case GATData.LinearDirection.Horizontal:
+						case GTData.LinearDirection.Horizontal:
 							height = (int)Data.LinearWidth;
 							break;
-						case GATData.LinearDirection.Vertical:
+						case GTData.LinearDirection.Vertical:
 							height = width;
 							width = (int)Data.LinearWidth;
 							break;
 					}
 					break;
-				case GATData.GradientType.Radial:
+				case GTData.GradientType.Radial:
 					width = width * 2;
 					height = width;
 					break;
@@ -106,12 +93,12 @@ namespace Ikaroon.RenderingEssentialsEditor.FileTypes
 			tex2D = new Texture2D(width, height, Data.TextureFormat, true, !Data.SRGB);
 			tex2D.wrapMode = Data.WrapMode;
 			tex2D.filterMode = Data.FilterMode;
-			ctx.AddObjectToAsset("Gradient Auto Texture", tex2D);
+			ctx.AddObjectToAsset("Gradient Texture", tex2D);
 			ctx.SetMainObject(tex2D);
 
 			switch (Data.Type)
 			{
-				case GATData.GradientType.Linear:
+				case GTData.GradientType.Linear:
 					for (int x = 0; x < width; x++)
 					{
 						for (int y = 0; y < height; y++)
@@ -119,10 +106,10 @@ namespace Ikaroon.RenderingEssentialsEditor.FileTypes
 							float progress = 0;
 							switch (Data.Direction)
 							{
-								case GATData.LinearDirection.Horizontal:
+								case GTData.LinearDirection.Horizontal:
 									progress = (float)x / (float)width;
 									break;
-								case GATData.LinearDirection.Vertical:
+								case GTData.LinearDirection.Vertical:
 									progress = (float)y / (float)height;
 									break;
 							}
@@ -130,7 +117,7 @@ namespace Ikaroon.RenderingEssentialsEditor.FileTypes
 						}
 					}
 					break;
-				case GATData.GradientType.Radial:
+				case GTData.GradientType.Radial:
 					Vector2 center = new Vector2(width / 2, height / 2);
 					for (int x = 0; x < width; x++)
 					{

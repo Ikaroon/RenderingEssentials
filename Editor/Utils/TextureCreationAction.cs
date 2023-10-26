@@ -1,12 +1,15 @@
-﻿using System.IO;
+using System.IO;
 using UnityEditor;
 using UnityEditor.ProjectWindowCallback;
 using UnityEngine;
 
-namespace Ikaroon.RenderingEssentialsEditor.FileTypes
+namespace Ikaroon.RenderingEssentialsEditor.Utils
 {
-	internal class GradientAutoTextureCreationAction : EndNameEditAction
+	internal abstract class TextureCreationAction : EndNameEditAction
 	{
+		protected abstract string Extension { get; }
+		protected abstract string Content { get; }
+
 		public override void Action(int instanceId, string pathName, string resourceFile)
 		{
 			var assetPath = AssetDatabase.GenerateUniqueAssetPath(pathName);
@@ -14,12 +17,9 @@ namespace Ikaroon.RenderingEssentialsEditor.FileTypes
 			AssetDatabase.CreateAsset(textAsset, assetPath);
 
 			var fullPath = Path.Combine(Directory.GetParent(Application.dataPath).FullName, assetPath);
-			var newPath = Path.ChangeExtension(fullPath, ".igat");
+			var newPath = Path.ChangeExtension(fullPath, $".{Extension}");
 
-			var data = new GradientAutoTextureImporter.GATData();
-			var content = JsonUtility.ToJson(data);
-
-			File.WriteAllText(fullPath, content);
+			File.WriteAllText(fullPath, Content);
 			File.Move(fullPath, newPath);
 			File.Delete(fullPath + ".meta");
 			AssetDatabase.Refresh();
@@ -30,13 +30,12 @@ namespace Ikaroon.RenderingEssentialsEditor.FileTypes
 			Selection.activeObject = null;
 		}
 
-		[MenuItem("Assets/Create/Gradient Auto Texture", false, 307)]
-		public static void Generate()
+		protected static void Generate<T>(string name) where T : TextureCreationAction
 		{
-			var createOperation = CreateInstance<GradientAutoTextureCreationAction>();
+			var createOperation = CreateInstance<T>();
 			var script = new TextAsset();
 			var path = AssetDatabase.GetAssetPath(Selection.activeObject);
-			path = Path.Combine(path, "New Gradient Auto Texture.asset");
+			path = Path.Combine(path, $"{name}.asset");
 			ProjectWindowUtil.StartNameEditingIfProjectWindowExists(
 				script.GetInstanceID(),
 				createOperation,

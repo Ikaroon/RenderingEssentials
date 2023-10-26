@@ -3,10 +3,10 @@ using UnityEditor;
 using UnityEditor.AssetImporters;
 using UnityEngine;
 
-namespace Ikaroon.RenderingEssentialsEditor.FileTypes
+namespace Ikaroon.RenderingEssentialsEditor.FileTypes.Gradient2D
 {
-	[CustomEditor(typeof(GradientAutoTextureImporter))]
-	public class GradientAutoTextureImporterEditor : ScriptedImporterEditor
+	[CustomEditor(typeof(Gradient2DTextureImporter))]
+	public class Gradient2DTextureImporterEditor : ScriptedImporterEditor
 	{
 		public override void OnInspectorGUI()
 		{
@@ -14,30 +14,13 @@ namespace Ikaroon.RenderingEssentialsEditor.FileTypes
 
 			var gradient = serializedObject.FindProperty("<Data>k__BackingField.<Gradient>k__BackingField");
 			EditorGUILayout.PropertyField(gradient);
-			var type = serializedObject.FindProperty("<Data>k__BackingField.<Type>k__BackingField");
 
 			EditorGUILayout.Space();
-			EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-			EditorGUILayout.PropertyField(type);
-			var gradientType = (GradientAutoTextureImporter.GATData.GradientType)type.intValue;
-			var size = serializedObject.FindProperty("<Data>k__BackingField.<GradientSteps>k__BackingField");
+			var size = serializedObject.FindProperty("<Data>k__BackingField.<Resolution>k__BackingField");
 			EditorGUILayout.PropertyField(size);
-			switch (gradientType)
-			{
-				case GradientAutoTextureImporter.GATData.GradientType.Linear:
-					var secondarySize = serializedObject.FindProperty("<Data>k__BackingField.<LinearWidth>k__BackingField");
-					EditorGUILayout.PropertyField(secondarySize, new GUIContent("Width"));
-
-					var direction = serializedObject.FindProperty("<Data>k__BackingField.<Direction>k__BackingField");
-					EditorGUILayout.PropertyField(direction);
-					break;
-			}
-			EditorGUILayout.EndVertical();
 
 			EditorGUILayout.Space();
 			EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-			var inverted = serializedObject.FindProperty("<Data>k__BackingField.<Inverted>k__BackingField");
-			EditorGUILayout.PropertyField(inverted);
 			var sRGB = serializedObject.FindProperty("<Data>k__BackingField.<SRGB>k__BackingField");
 			EditorGUILayout.PropertyField(sRGB, new GUIContent("sRGB"));
 			var wrapMode = serializedObject.FindProperty("<Data>k__BackingField.<WrapMode>k__BackingField");
@@ -55,7 +38,7 @@ namespace Ikaroon.RenderingEssentialsEditor.FileTypes
 
 		protected override void Apply()
 		{
-			var importer = (GradientAutoTextureImporter)target;
+			var importer = (Gradient2DTextureImporter)target;
 			File.WriteAllText(importer.assetPath, JsonUtility.ToJson(importer.Data));
 			base.Apply();
 		}
