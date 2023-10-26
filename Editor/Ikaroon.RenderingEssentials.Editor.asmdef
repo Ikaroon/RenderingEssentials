@@ -1,7 +1,9 @@
 {
     "name": "Ikaroon.RenderingEssentials.Editor",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:17d9bf248e30409459b6ec8d8ac0799e"
+    ],
     "includePlatforms": [
         "Editor"
     ],
