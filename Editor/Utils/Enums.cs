@@ -1,5 +1,13 @@
 namespace Ikaroon.RenderingEssentialsEditor.Utils
 {
+	public enum TextureFileType
+	{
+		PNG,
+		TGA,
+		JPG,
+		EXR
+	}
+
 	public enum TextureSize
 	{
 		_2 = 2,

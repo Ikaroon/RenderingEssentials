@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Ikaroon.RenderingEssentialsEditor.FileTypes.Worley3D;
+using System.IO;
 using UnityEditor;
 using UnityEditor.AssetImporters;
 using UnityEngine;
@@ -26,6 +27,12 @@ namespace Ikaroon.RenderingEssentialsEditor.FileTypes.Worley2D
 			var filterMode = serializedObject.FindProperty("<Data>k__BackingField.<FilterMode>k__BackingField");
 			EditorGUILayout.PropertyField(filterMode);
 			EditorGUILayout.EndVertical();
+
+			if (GUILayout.Button("Export"))
+			{
+				var importer = (Worley2DTextureImporter)target;
+				importer.ExportTexture();
+			}
 
 			serializedObject.ApplyModifiedProperties();
 

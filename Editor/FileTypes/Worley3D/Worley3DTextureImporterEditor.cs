@@ -27,6 +27,12 @@ namespace Ikaroon.RenderingEssentialsEditor.FileTypes.Worley3D
 			EditorGUILayout.PropertyField(filterMode);
 			EditorGUILayout.EndVertical();
 
+			if (GUILayout.Button("Export"))
+			{
+				var importer = (Worley3DTextureImporter)target;
+				importer.ExportTexture();
+			}
+
 			serializedObject.ApplyModifiedProperties();
 
 			ApplyRevertGUI();

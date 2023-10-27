@@ -35,18 +35,24 @@ namespace Ikaroon.RenderingEssentialsEditor.FileTypes.Worley2D
 			if (Data == null)
 				Data = new WT2Data();
 
-			int size = (int)Data.Resolution;
-
 			if (ctx.mainObject is Texture2D tex2D)
 			{
 				Object.DestroyImmediate(tex2D, true);
 			}
 
-			tex2D = new Texture2D(size, size, GraphicsFormat.R32_SFloat, 0, TextureCreationFlags.None);
-			tex2D.wrapMode = Data.WrapMode;
-			tex2D.filterMode = Data.FilterMode;
+			tex2D = GenerateTexture(true);
+
 			ctx.AddObjectToAsset("Worley 2D Texture", tex2D);
 			ctx.SetMainObject(tex2D);
+		}
+
+		Texture2D GenerateTexture(bool makeReadOnly)
+		{
+			int size = (int)Data.Resolution;
+
+			var tex2D = new Texture2D(size, size, GraphicsFormat.R32_SFloat, 0, TextureCreationFlags.None);
+			tex2D.wrapMode = Data.WrapMode;
+			tex2D.filterMode = Data.FilterMode;
 
 			for (int x = 0; x < size; x++)
 			{
@@ -58,7 +64,27 @@ namespace Ikaroon.RenderingEssentialsEditor.FileTypes.Worley2D
 					tex2D.SetPixel(x, y, new Color(worley, 0, 0, 1));
 				}
 			}
-			tex2D.Apply(true, true);
+			tex2D.Apply(true, makeReadOnly);
+
+			return tex2D;
+		}
+
+		public void ExportTexture()
+		{
+			var canOpen = Texture2DExt.SaveTexturePanel("Export Worley Texture", Application.dataPath, name, out var path, out var fileType);
+			if (!canOpen)
+				return;
+
+			var tex2D = GenerateTexture(false);
+
+			try
+			{
+				tex2D.SaveTexture(fileType, path);
+			}
+			finally
+			{
+				DestroyImmediate(tex2D);
+			}
 		}
 	}
 }
