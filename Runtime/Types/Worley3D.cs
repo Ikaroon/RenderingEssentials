@@ -9,9 +9,11 @@ namespace Ikaroon.RenderingEssentials.Runtime.Types
 		[SerializeField]
 		int m_seed = 0;
 		[SerializeField, Min(1)]
-		int m_pointCount = 20;
+		int m_pointCountPerAxis = 20;
 		[SerializeField, Range(0f, 1f)]
 		float m_radius = 1;
+		[SerializeField]
+		bool m_radiusRelativeToCount = false;
 		[SerializeField]
 		bool m_inverted = false;
 
@@ -23,20 +25,30 @@ namespace Ikaroon.RenderingEssentials.Runtime.Types
 			if (m_pointsCache == null)
 				m_pointsCache = new List<Vector3>();
 
-			if (m_pointsCache.Count == m_pointCount && m_seed == m_cachedSeed)
+			var pointCount = m_pointCountPerAxis * 3;
+			if (m_pointsCache.Count == pointCount && m_seed == m_cachedSeed)
 				return;
 
 			m_cachedSeed = m_seed;
 			m_pointsCache.Clear();
 
+			var cellSize = 1f / m_pointCountPerAxis;
+
 			var state = Random.state;
 			Random.InitState(m_seed);
-			for (int i = 0; i < m_pointCount; i++)
+			for (int x = 0; x < m_pointCountPerAxis; x++)
 			{
-				var x = Random.Range(0f, 1f);
-				var y = Random.Range(0f, 1f);
-				var z = Random.Range(0f, 1f);
-				m_pointsCache.Add(new Vector3(x, y, z));
+				for (int y = 0; y < m_pointCountPerAxis; y++)
+				{
+					for (int z = 0; z < m_pointCountPerAxis; z++)
+					{
+						var start = new Vector3(x, y, z) * cellSize;
+						var lx = Random.Range(0f, 1f) * cellSize;
+						var ly = Random.Range(0f, 1f) * cellSize;
+						var lz = Random.Range(0f, 1f) * cellSize;
+						m_pointsCache.Add(start + new Vector3(lx, ly, lz));
+					}
+				}
 			}
 			Random.state = state;
 		}
@@ -83,7 +95,14 @@ namespace Ikaroon.RenderingEssentials.Runtime.Types
 		public float Evaluate(float x, float y, float z)
 		{
 			float distance = GetShortestDistance(new Vector3(x, y, z));
-			var radius = Mathf.Clamp01(Mathf.InverseLerp(0, m_radius, distance));
+
+			var sourceRadius = m_radius;
+			if (m_radiusRelativeToCount)
+			{
+				var cellSize = 1f / m_pointCountPerAxis;
+				sourceRadius = m_radius * cellSize;
+			}
+			var radius = Mathf.Clamp01(Mathf.InverseLerp(0, sourceRadius, distance));
 
 			if (m_inverted)
 				radius = 1 - radius;
