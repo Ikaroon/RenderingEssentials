@@ -9,6 +9,8 @@ A small collection of rendering and graphics essentials
 - [x] Worley 2D Textures
 - [x] Worley 3D
 - [x] Worley 3D Textures
+- [x] White Noise 3D
+- [x] White Noise 3D Textures
 
 ## Installation
 
